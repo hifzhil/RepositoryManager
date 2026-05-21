@@ -1,0 +1,126 @@
+# =========================
+# Visual Studio / WPF / .NET
+# =========================
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Bb]in/
+[Oo]bj/
+x64/
+x86/
+Debug/
+DebugPublic/
+Release/
+Releases/
+
+# Visual Studio cache/options
+.vs/
+
+# Rider / ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# NuGet
+*.nupkg
+packages/
+!packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Logs
+*.log
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# Publish output
+publish/
+app.publish/
+
+# ClickOnce
+*.publishsettings
+
+# Temporary files
+*.tmp
+*.temp
+~$*
+*.bak
+
+# Windows image/file cache
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/
+
+# JetBrains Rider
+.idea/
+
+# Blend for Visual Studio
+*.Blend.Cache
+*.Blend.Cache.*
+Generated_Code/
+
+# SQL Server
+*.mdf
+*.ldf
+
+# Local DB
+*.db
+*.sqlite
+*.sqlite3
+
+# Azure
+PublishProfiles/
+
+# App packages
+AppPackages/
+BundleArtifacts/
+
+# Node modules (if frontend tooling exists)
+node_modules/
+
+# Coverage reports
+coverage/
+*.coverage
+*.coveragexml
+
+# Generated files
+Generated Files/
+
+# MSTest
+TestResults/
+
+# NUnit
+*.VisualState.xml
+TestResult.xml
+
+# DotNet CLI
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# WPF designer
+*.g.cs
+*.g.i.cs
+
+# Resharper cache
+*.cache
+
+# IIS Express
+.vs/config/
+
+# Backup files
+Backup*/
+*.orig
+
+# OS generated files
+.DS_Store

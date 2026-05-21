@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Platforms>x64</Platforms>
+    <ApplicationIcon>Resources\app.ico</ApplicationIcon>
+    <RootNamespace>RepositoryManager.GUI</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RepositoryManager.Models\RepositoryManager.Models.csproj" />
+    <ProjectReference Include="..\RepositoryManager.Core\RepositoryManager.Core.csproj" />
+    <ProjectReference Include="..\RepositoryManager.Interop\RepositoryManager.Interop.csproj" />
+    <ProjectReference Include="..\RepositoryManager.Services\RepositoryManager.Services.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\native\RepositoryNative.dll" Condition="Exists('..\native\RepositoryNative.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
