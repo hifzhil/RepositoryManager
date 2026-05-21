@@ -241,14 +241,6 @@
         <Setter Property="Foreground"   Value="{StaticResource TextSecondary}"/>
         <Setter Property="Padding"      Value="4,1"/>
         <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Text, Converter={x:Static local:StringContainsConverter.Instance}, ConverterParameter=ERROR}" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource Danger}"/>
-            </DataTrigger>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Text, Converter={x:Static local:StringContainsConverter.Instance}, ConverterParameter=WARNING}" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource Warning}"/>
-            </DataTrigger>
-        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

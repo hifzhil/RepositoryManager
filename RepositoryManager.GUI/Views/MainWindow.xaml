@@ -21,13 +21,17 @@
         <conv:BoolToVisibilityConverter         x:Key="BoolToVis"/>
         <conv:InverseBoolConverter              x:Key="InvBool"/>
         <conv:StringContainsConverter           x:Key="StrContains"/>
+        <conv:IntZeroToVisibilityConverter      x:Key="IntZeroToVis"/>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>   <!-- Toolbar -->
-            <RowDefinition Height="*"/>      <!-- Main content -->
-            <RowDefinition Height="Auto"/>   <!-- Status bar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Toolbar -->
+            <RowDefinition Height="*"/>
+            <!-- Main content -->
+            <RowDefinition Height="Auto"/>
+            <!-- Status bar -->
         </Grid.RowDefinitions>
 
         <!-- =========================================================
@@ -143,12 +147,15 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ---- LEFT PANEL ---- -->
+            <!-- LEFT PANEL -->
             <Grid Grid.Column="0" Background="{StaticResource BgSecondary}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>  <!-- search box -->
-                    <RowDefinition Height="Auto"/>  <!-- stats -->
-                    <RowDefinition Height="*"/>     <!-- list -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- search box -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- stats -->
+                    <RowDefinition Height="*"/>
+                    <!-- list -->
                 </Grid.RowDefinitions>
 
                 <!-- Search -->
@@ -236,7 +243,7 @@
                 </ListBox>
 
                 <!-- Empty state -->
-                <Border Grid.Row="2" Visibility="{Binding FilteredItems.Count, Converter={StaticResource NullToVisInv}}"
+                <Border Grid.Row="2" Visibility="{Binding FilteredItems.Count, Converter={StaticResource IntZeroToVis}}"
                         IsHitTestVisible="False">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="&#xE8A1;" FontFamily="Segoe MDL2 Assets" FontSize="40"
@@ -253,11 +260,13 @@
             <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Stretch"
                           Background="{StaticResource Separator}" Cursor="SizeWE"/>
 
-            <!-- ---- RIGHT PANEL ---- -->
+            <!-- RIGHT PANEL -->
             <Grid Grid.Column="2" Background="{StaticResource BgPrimary}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>  <!-- header -->
-                    <RowDefinition Height="*"/>     <!-- preview -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- header -->
+                    <RowDefinition Height="*"/>
+                    <!-- preview -->
                 </Grid.RowDefinitions>
 
                 <!-- Detail header (shown when something is selected) -->
@@ -309,20 +318,37 @@
                     <Border Visibility="{Binding SelectedItem, Converter={StaticResource NullToVisInv}}"
                             AllowDrop="True">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Border BorderBrush="{StaticResource Border}" BorderThickness="2"
-                                    CornerRadius="12" Padding="40,30" Margin="20">
-                                <Border.BorderDashArray>4 4</Border.BorderDashArray>
-                                <StackPanel>
-                                    <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="48"
-                                               Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="Select an item to preview" FontSize="14"
-                                               Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Center"
-                                               Margin="0,12,0,4"/>
-                                    <TextBlock Text="or drag &amp; drop a JSON / XML file here"
-                                               FontSize="12" Foreground="{StaticResource TextMuted}"
-                                               HorizontalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
+                            <Grid Margin="20">
+                                <!-- dashed outline -->
+                                <Rectangle Stroke="{StaticResource Border}"
+                                    StrokeThickness="2"
+                                    RadiusX="12"
+                                    RadiusY="12"
+                                    StrokeDashArray="4 4"
+                                    Fill="Transparent"/>
+
+                                <!-- content -->
+                                <Border Padding="40,30" Background="Transparent">
+                                    <StackPanel>
+                                        <TextBlock Text="&#xE896;"
+                                           FontFamily="Segoe MDL2 Assets"
+                                           FontSize="48"
+                                           Foreground="{StaticResource TextMuted}"
+                                           HorizontalAlignment="Center"/>
+
+                                        <TextBlock Text="Select an item to preview"
+                                           FontSize="14"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,12,0,4"/>
+
+                                        <TextBlock Text="or drag &amp; drop a JSON / XML file here"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextMuted}"
+                                           HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
                         </StackPanel>
                     </Border>
                 </Grid>
