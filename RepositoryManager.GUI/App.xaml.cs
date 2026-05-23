@@ -1,10 +1,10 @@
 using System.Windows;
+using Microsoft.Extensions.Configuration;
+using RepositoryManager.Core.Interfaces;
 using RepositoryManager.GUI.ViewModels;
 using RepositoryManager.GUI.Views;
+using RepositoryManager.Interop;
 using RepositoryManager.Services;
-
-// To use the REAL native DLL instead of the mock, swap the commented lines below.
-// using RepositoryManager.Interop;
 
 namespace RepositoryManager.GUI;
 
@@ -14,16 +14,19 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        // -------------------------------------------------------
-        // Composition root — wire dependencies here.
-        // Swap MockRepositoryService for NativeRepositoryService
-        // once the native DLL is in place.
-        // -------------------------------------------------------
-        var service = new MockRepositoryService();
-        // var service = new NativeRepositoryService();
+        IConfiguration config = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: false)
+            .Build();
 
-        var vm     = new MainViewModel(service);
-        var window = new MainWindow(vm);
+        bool useNative = config.GetValue<bool>("UseNativeBackend");
+
+        IRepositoryService service = useNative
+            ? new NativeRepositoryService()
+            : new MockRepositoryService();
+
+        var viewModel = new MainViewModel(service);
+        var window = new MainWindow(viewModel);
 
         MainWindow = window;
         window.Show();
