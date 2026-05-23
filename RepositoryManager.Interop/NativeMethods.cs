@@ -16,61 +16,103 @@ namespace RepositoryManager.Interop;
 /// </summary>
 internal static class NativeMethods
 {
-    private const string DllName = "RepositoryNative";
+    private const string Dll = "repomgr";
 
     // -----------------------------------------------------------------
-    // bool RM_Initialize()
+    // RepoHandle* RepoCreate()
+    // Allocates a new repository instance on the native heap.
+    // Returns IntPtr.Zero on allocation failure.
+    // Caller MUST call RepoDestroy when done to avoid memory leaks.
     // -----------------------------------------------------------------
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    [return: MarshalAs(UnmanagedType.I1)]
-    internal static extern bool RM_Initialize();
+    [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern IntPtr RepoCreate();
 
     // -----------------------------------------------------------------
-    // bool RM_Register(const char* itemName, const char* itemContent, int itemType)
+    // void RepoDestroy(RepoHandle* h)
+    // Frees the repository instance and all items it holds.
+    // Must be called exactly once per RepoCreate call.
     // -----------------------------------------------------------------
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    [return: MarshalAs(UnmanagedType.I1)]
-    internal static extern bool RM_Register(
-        [MarshalAs(UnmanagedType.LPStr)] string itemName,
-        [MarshalAs(UnmanagedType.LPStr)] string itemContent,
+    [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void RepoDestroy(IntPtr h);
+
+    // -----------------------------------------------------------------
+    // int32_t RepoInitialize(RepoHandle* h)
+    // Must be called exactly once after RepoCreate before any other call.
+    // Returns REPO_ERR_DUPLICATE if called more than once.
+    // -----------------------------------------------------------------
+    [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int RepoInitialize(IntPtr h);
+
+    // -----------------------------------------------------------------
+    // int32_t RepoRegister(RepoHandle* h,
+    //                      const char* name,
+    //                      const char* content,
+    //                      int32_t itemType)
+    // itemType: 1 = JSON, 2 = XML.
+    // Returns REPO_ERR_DUPLICATE if name already exists.
+    // Returns REPO_ERR_INVALID_CONTENT if content fails format validation.
+    // -----------------------------------------------------------------
+    [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int RepoRegister(
+        IntPtr h,
+        [MarshalAs(UnmanagedType.LPStr)] string name,
+        [MarshalAs(UnmanagedType.LPStr)] string content,
         int itemType);
 
     // -----------------------------------------------------------------
-    // const char* RM_Retrieve(const char* itemName)
-    // Returns a native heap pointer; caller MUST call RM_FreeString.
+    // int32_t RepoRetrieve(RepoHandle* h,
+    //                      const char* name,
+    //                      char*    outBuf,
+    //                      size_t   bufLen,
+    //                      size_t*  outLen)
+    // Two-call pattern:
+    //   1st call: pass null/0 buffer → C++ writes required size into outLen
+    //             → returns REPO_ERR_BUFFER_TOO_SMALL
+    //   2nd call: allocate outLen+1 bytes, pass as outBuf → C++ fills it
+    //             → returns REPO_OK
+    // No native heap allocation — C# owns the buffer throughout.
     // -----------------------------------------------------------------
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    internal static extern IntPtr RM_Retrieve(
-        [MarshalAs(UnmanagedType.LPStr)] string itemName);
+    [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int RepoRetrieve(
+        IntPtr h,
+        [MarshalAs(UnmanagedType.LPStr)] string name,
+        byte[] outBuf,
+        UIntPtr bufLen,
+        out UIntPtr outLen);
 
     // -----------------------------------------------------------------
-    // int RM_GetType(const char* itemName)
+    // int32_t RepoGetType(RepoHandle* h,
+    //                     const char* name,
+    //                     int32_t*    outType)
+    // Writes 1 (JSON) or 2 (XML) into outType on success.
+    // Returns REPO_ERR_NOT_FOUND if name does not exist.
     // -----------------------------------------------------------------
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    internal static extern int RM_GetType(
-        [MarshalAs(UnmanagedType.LPStr)] string itemName);
+    [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int RepoGetType(
+        IntPtr h,
+        [MarshalAs(UnmanagedType.LPStr)] string name,
+        out int outType);
 
     // -----------------------------------------------------------------
-    // bool RM_Deregister(const char* itemName)
+    // int32_t RepoDeregister(RepoHandle* h, const char* name)
+    // Removes the item permanently from the repository.
+    // Returns REPO_ERR_NOT_FOUND if name does not exist.
     // -----------------------------------------------------------------
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    [return: MarshalAs(UnmanagedType.I1)]
-    internal static extern bool RM_Deregister(
-        [MarshalAs(UnmanagedType.LPStr)] string itemName);
+    [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int RepoDeregister(
+        IntPtr h,
+        [MarshalAs(UnmanagedType.LPStr)] string name);
 
     // -----------------------------------------------------------------
-    // bool RM_Contains(const char* itemName)
+    // int32_t RepoContains(RepoHandle* h,
+    //                      const char* name,
+    //                      int32_t*    outFound)
+    // Writes 1 (exists) or 0 (not found) into outFound on success.
+    // Does NOT throw for empty or whitespace names — outFound = 0.
     // -----------------------------------------------------------------
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    [return: MarshalAs(UnmanagedType.I1)]
-    internal static extern bool RM_Contains(
-        [MarshalAs(UnmanagedType.LPStr)] string itemName);
-
-    // -----------------------------------------------------------------
-    // void RM_FreeString(const char* str)
-    // Releases a string previously allocated by the DLL (e.g. RM_Retrieve).
-    // Must be called on the original IntPtr — never on a managed string.
-    // -----------------------------------------------------------------
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    internal static extern void RM_FreeString(IntPtr str);
+    [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int RepoContains(
+        IntPtr h,
+        [MarshalAs(UnmanagedType.LPStr)] string name,
+        out int outFound);
 }

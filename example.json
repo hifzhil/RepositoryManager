@@ -1,0 +1,10 @@
+{
+  "name": "John Doe",
+  "age": 30,
+  "isEmployee": true,
+  "skills": ["C#", "Python", "SQL"],
+  "address": {
+    "city": "Denpasar",
+    "country": "Indonesia"
+  }
+}
